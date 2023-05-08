@@ -137,11 +137,12 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_account(self):
-        """Updates an existing account"""
+        """It should an existing account"""
+        """create an account to update"""
         test_account = AccountFactory()
         response = self.client.post(BASE_URL, json=test_account.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
+        """update the account"""
         new_account = response.get_json()
         new_account["name"] = "Something known"
         response = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
@@ -170,5 +171,5 @@ class TestAccountService(TestCase):
 
     def test_method_not_allowed(self):
         """It should not allow an illegal method call"""
-        resp = self.client.delete(BASE_URL)
-        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        response = self.client.delete(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
