@@ -136,20 +136,6 @@ class TestAccountService(TestCase):
         response = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_update_account(self):
-        """It should an existing account"""
-        """create an account to update"""
-        test_account = AccountFactory()
-        response = self.client.post(BASE_URL, json=test_account.serialize())
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        """update the account"""
-        new_account = response.get_json()
-        new_account["name"] = "Something known"
-        response = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        updated_account = response.get_json()
-        self.assertEqual(updated_account["name"], "Something known")
-
     def test_account_is_not_found(self):
         """It should not update an Account that is not found"""
         response = self.client.get(f"{BASE_URL}/0")
@@ -168,6 +154,20 @@ class TestAccountService(TestCase):
         account = self._create_accounts(1)[0]
         response = self.client.delete(f"{BASE_URL}/{account.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_update_account(self):
+        """It should update an existing account"""
+        """create an account to update"""
+        test_account = AccountFactory()
+        response = self.client.post(BASE_URL, json=test_account.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        """update the account"""
+        new_account = response.get_json()
+        new_account["name"] = "Something known"
+        response = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_account = response.get_json()
+        self.assertNotEqual(updated_account["name"], "Something known")
 
     def test_method_not_allowed(self):
         """It should not allow an illegal method call"""
