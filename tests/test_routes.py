@@ -126,35 +126,32 @@ class TestAccountService(TestCase):
     def test_read_an_account(self):
         """It should show the details of the customer's account """
         account = self._create_accounts(1)[0]
-        response=self.client.get(f"{BASE_URL}/{account.id}",content_type="application/json")
+        response = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assertEqual(data["name"],account.name)
+        self.assertEqual(data["name"], account.name)
 
     def test_account_not_found(self):
         """It should not Read an Account that is not found"""
-        response=self.client.get(f"{BASE_URL}/0")
+        response = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_update_account(self):
         """Updates an existing account"""
-        #creates an Account
         test_account = AccountFactory()
         response = self.client.post(BASE_URL, json=test_account.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        #update an Account
         new_account = response.get_json()
         new_account["name"] = "Something known"
-        response = self.client.put(f"{BASE_URL}/{new_account['id']}",json=new_account)
+        response = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_account = response.get_json()
         self.assertEqual(updated_account["name"], "Something known")
 
-    def test_account_not_found(self):
+    def test_account_is_not_found(self):
         """It should not update an Account that is not found"""
-        response=self.client.get(f"{BASE_URL}/0")
+        response = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_account_list(self):
